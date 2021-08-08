@@ -11,15 +11,25 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 import colors from '../config/colors';
 import fontSize from '../config/fontSize';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {loginUser} from '../redux/actions/auth.action';
 
-export default function Login() {
+export default function Login(props) {
   const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState();
   const [showLoader, setShowLoader] = useState(false);
+
+  useEffect(
+    function onLoginComplete() {
+      if (Object.keys(user).length > 0) {
+        props.navigation.navigate('Events');
+      }
+    },
+    [user],
+  );
 
   async function handleLogin() {
     if (validateEmail() && validatePassword()) {
@@ -30,8 +40,8 @@ export default function Login() {
           password,
         );
         setShowLoader(false);
+        setError();
         dispatch(loginUser(response.user));
-        console.log(response);
       } catch (err) {
         setShowLoader(false);
 

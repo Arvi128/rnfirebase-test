@@ -39,6 +39,7 @@ export default function Login(props) {
         props.navigation.push('Events');
       } catch (err) {
         setShowLoader(false);
+        setError('Incorrect email/password provided.');
         console.error('Errors', err);
       }
     } else {

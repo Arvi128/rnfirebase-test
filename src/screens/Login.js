@@ -36,7 +36,7 @@ export default function Login(props) {
         setError();
         AsyncStorage.setItem('userId', response.user._user.uid);
         dispatch(loginUser(response.user));
-        props.navigation.push('Events');
+        props.navigation.replace('Events');
       } catch (err) {
         setShowLoader(false);
         setError('Incorrect email/password provided.');

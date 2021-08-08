@@ -113,6 +113,9 @@ function Events(props) {
         {isLoading && events.length === 0 && (
           <ActivityIndicator size="large" color={colors.primary} />
         )}
+        {!isLoading && events.length === 0 && (
+          <Text style={styles.emptyText}>No events found !</Text>
+        )}
         <FlatList
           data={events}
           keyboardShouldPersistTaps="always"
@@ -178,5 +181,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  emptyText: {
+    fontSize: fontSize.md,
   },
 });

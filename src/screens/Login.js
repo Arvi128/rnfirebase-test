@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
@@ -13,6 +14,7 @@ import colors from '../config/colors';
 import fontSize from '../config/fontSize';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginUser} from '../redux/actions/auth.action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login(props) {
   const dispatch = useDispatch();
@@ -21,15 +23,6 @@ export default function Login(props) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState();
   const [showLoader, setShowLoader] = useState(false);
-
-  useEffect(
-    function onLoginComplete() {
-      if (Object.keys(user).length > 0) {
-        props.navigation.navigate('Events');
-      }
-    },
-    [user],
-  );
 
   async function handleLogin() {
     if (validateEmail() && validatePassword()) {
@@ -41,10 +34,11 @@ export default function Login(props) {
         );
         setShowLoader(false);
         setError();
+        AsyncStorage.setItem('userId', response.user._user.uid);
         dispatch(loginUser(response.user));
+        props.navigation.push('Events');
       } catch (err) {
         setShowLoader(false);
-
         console.error('Errors', err);
       }
     } else {
@@ -59,7 +53,10 @@ export default function Login(props) {
     return false;
   }
   function validatePassword() {
-    return password.length >= 6;
+    if (/^(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(password)) {
+      return true;
+    }
+    return false;
   }
 
   return (

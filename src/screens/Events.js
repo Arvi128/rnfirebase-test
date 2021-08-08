@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import fontSize from '../config/fontSize';
@@ -20,11 +21,14 @@ function Events(props) {
   const [events, setEvents] = useState([]);
   const [allEvents, setAllEvents] = useState([]);
   const [searchText, setSearchText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(function onLoad() {
+      setIsLoading(true);
       firestore()
         .collection('events')
+        .orderBy('title', 'asc')
         .get()
         .then(querySnapshot => {
           const list = querySnapshot.docs.map(doc => {
@@ -32,6 +36,11 @@ function Events(props) {
           });
           setEvents(list);
           setAllEvents(list);
+          setIsLoading(false);
+        })
+        .catch(e => {
+          console.error(e);
+          setIsLoading(false);
         });
     }, []),
   );
@@ -101,7 +110,9 @@ function Events(props) {
             <Text style={styles.newText}>New</Text>
           </TouchableOpacity>
         </View>
-
+        {isLoading && events.length === 0 && (
+          <ActivityIndicator size="large" color={colors.primary} />
+        )}
         <FlatList
           data={events}
           keyboardShouldPersistTaps="always"

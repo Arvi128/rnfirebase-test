@@ -47,6 +47,7 @@ function Events(props) {
 
   useEffect(
     function searchHandler() {
+      console.log({searchText});
       if (searchText) {
         const list = allEvents.filter(event =>
           event.data.title.toLowerCase().includes(searchText.toLowerCase()),
@@ -56,7 +57,7 @@ function Events(props) {
         setEvents(allEvents);
       }
     },
-    [searchText],
+    [searchText, allEvents],
   );
 
   /**
@@ -76,7 +77,8 @@ function Events(props) {
       .update({
         isChecked: list[index].data.isChecked,
       })
-      .then(res => {});
+      .then(() => console.log('Updated'))
+      .catch(e => console.error(e));
   }
 
   function renderItem({item, index}) {
